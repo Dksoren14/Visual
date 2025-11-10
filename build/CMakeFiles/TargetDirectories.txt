@@ -1,0 +1,4 @@
+/home/dksoren/Visual/build/CMakeFiles/VisualLib.dir
+/home/dksoren/Visual/build/CMakeFiles/VisualApp.dir
+/home/dksoren/Visual/build/CMakeFiles/edit_cache.dir
+/home/dksoren/Visual/build/CMakeFiles/rebuild_cache.dir

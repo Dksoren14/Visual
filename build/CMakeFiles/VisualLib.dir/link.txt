@@ -1,0 +1,2 @@
+/usr/bin/ar qc libVisualLib.a CMakeFiles/VisualLib.dir/src/utils.cpp.o CMakeFiles/VisualLib.dir/src/manipulator.cpp.o
+/usr/bin/ranlib libVisualLib.a

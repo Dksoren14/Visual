@@ -1,0 +1,20 @@
+%YAML:1.0
+denoise:
+   h: 10
+   hColor: 10
+   templateWindowSize: 7
+   searchWindowSize: 21
+canny_parameters:
+   threshold_low: 350
+   threshold_max: 350   
+blob_detection:
+   kernel_size: 2
+   connectivity: 7
+bilateral_filter:
+   d: 15
+   sigmaColor: 75
+   sigmaSpace: 75
+brightness_contrast:
+   brightness: 200
+   contrast: 126
+
