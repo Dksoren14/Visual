@@ -77,7 +77,7 @@ cv::Mat saturation(const cv::Mat& inputImage, double saturationScale) {
     return outputImage;
 }
 
-cv:Mat BGR_channel_changer(const cv::Mat& inputImage, int channelIndex, double scale) {
+cv::Mat BGR_channel_changer(const cv::Mat& inputImage, int channelIndex, double scale) {
     cv::Mat outputImage;
     std::vector<cv::Mat> bgrChannels;
     cv::split(inputImage, bgrChannels);
