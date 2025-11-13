@@ -51,6 +51,9 @@
         "typeinfo": "cpp",
         "cmath": "cpp",
         "numbers": "cpp",
-        "__nullptr": "cpp"
+        "__nullptr": "cpp",
+        "semaphore": "cpp",
+        "stop_token": "cpp",
+        "__mutex_base": "cpp"
     }
 }

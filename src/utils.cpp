@@ -50,6 +50,8 @@ Config loadConfig(const std::string& path) {
     fs["brightness_contrast"]["brightness"] >> cfg.brightness_contrast.brightness;
     fs["brightness_contrast"]["contrast"] >> cfg.brightness_contrast.contrast;
 
+    fs["median_filter"]["kernel_size"] >> cfg.median_filter.kernel_size;
+
     fs.release();
     return cfg;
 }
@@ -77,6 +79,8 @@ cv::Mat draw_circles(const cv::Mat& inputImage, const cv::Point& centroids, int 
     return output;
 
 }
+
+//!! Just for testing
 
 void tuning(const cv::Mat& inputImage, int mode) {
     if (inputImage.empty()) {
@@ -197,31 +201,45 @@ void tuning(const cv::Mat& inputImage, int mode) {
             destroyWindow(windowName);
             break;
         } 
+        case 3: {
+            const string windowName = "Saturation and Canny Tuning";
+            namedWindow(windowName, WINDOW_AUTOSIZE);
+            createTrackbar("Saturation Scale x100", windowName, &contrast, 300);
+            createTrackbar("Canny Low", windowName, &lowThreshold, 255);
+            createTrackbar("Canny High", windowName, &highThreshold, 255);
+            Mat hsvImage, saturatedImage, edges, output;
+            cout << "Adjust sliders. Press ESC to exit." << endl;
+            while (true) {
+                // Convert to HSV
+                cvtColor(inputImage, hsvImage, COLOR_BGR2HSV);
+                // Split channels
+                vector<Mat> hsvChannels;
+                split(hsvImage, hsvChannels);
+                // Adjust saturation
+                double saturationScale = contrast / 100.0;
+                hsvChannels[1] *= saturationScale;
+                // Merge back
+                merge(hsvChannels, hsvImage);
+                // Convert back to BGR
+                cvtColor(hsvImage, saturatedImage, COLOR_HSV2BGR);
+                // Convert to grayscale for Canny
+                Mat graySaturated;
+                cvtColor(saturatedImage, graySaturated, COLOR_BGR2GRAY);
+                // Apply Canny
+                Canny(graySaturated, edges, lowThreshold, highThreshold);
+                // Combine for visualization
+                cvtColor(edges, output, COLOR_GRAY2BGR);
+                addWeighted(output, 0.7, inputImage, 0.3, 0, output);
+                imshow(windowName, output);
+                // Exit on ESC key
+                int key = waitKey(30);
+                if (key == 27)  // ESC
+                    break;
+
+            
+        }
+            destroyWindow(windowName);
+            break;
+        }   
     }
-}
-
-cv::Mat brightnees_contrast(const cv::Mat& inputImage, double contrast, int brightness) {
-    cv::Mat output;
-    double alpha = contrast / 100.0;
-    double beta = brightness - 100;
-    inputImage.convertTo(output, -1, alpha, beta);
-    return output;
-}
-
-cv::Mat erosion_morphology(const cv::Mat& inputImage, int kernel_size) {
-    cv::Mat output;
-    cv::Mat element = cv::getStructuringElement(cv::MORPH_RECT,
-                        cv::Size(2 * kernel_size + 1, 2 * kernel_size + 1),
-                        cv::Point(kernel_size, kernel_size));
-    cv::erode(inputImage, output, element);
-    return output;
-}
-
-cv::Mat opening_morphology(const cv::Mat& inputImage, int kernel_size) {
-    cv::Mat outputImage;
-    cv::Mat element = cv::getStructuringElement(cv::MORPH_RECT,
-                        cv::Size(2 * kernel_size + 1, 2 * kernel_size + 1),
-                        cv::Point(kernel_size, kernel_size));
-    cv::morphologyEx(inputImage, outputImage, cv::MORPH_OPEN, element);
-    return outputImage;
 }

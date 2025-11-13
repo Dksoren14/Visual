@@ -34,12 +34,17 @@ struct BrightnessContrastConfig {
     int contrast;
 };
 
+struct MedianFilterConfig {
+    int kernel_size;
+};
+
 struct Config {
     DenoiseConfig denoise;
     CannyParameters canny_parameters;
     BlobDetectionConfig blob_detection;
     BilateralFilterConfig bilateral_filter;
     BrightnessContrastConfig brightness_contrast;
+    MedianFilterConfig median_filter;
 };
 
 
@@ -62,8 +67,3 @@ cv::Mat draw_circles(const cv::Mat& inputImage, const cv::Point& centroids, int 
 
 void tuning(const cv::Mat& inputImage, int mode = 0);
 
-cv::Mat brightnees_contrast(const cv::Mat& inputImage, double contrast, int brightness);
-
-cv::Mat erosion_morphology(const cv::Mat& inputImage, int kernel_size);
-
-cv::Mat opening_morphology(const cv::Mat& inputImage, int kernel_size);
