@@ -28,14 +28,15 @@ int main() {
 
 
     cv::Mat brightness_contrast_image = brightnees_contrast(saturatedImage, cfg.brightness_contrast.contrast, cfg.brightness_contrast.brightness);
-    cv::Mat medianFiltered = median_filter(image, cfg.median_filter.kernel_size);
-    cv::Mat RedEnhanced = BGR_channel_changer(image, 0, 0.5);
+    
+    cv::Mat RedEnhanced = BGR_channel_changer(image, 0, 0);
+    cv::Mat medianFiltered = median_filter(RedEnhanced, cfg.median_filter.kernel_size);
     //cv::Mat bilateralImage = bilateralFilter(image, cfg.bilateral_filter.d, cfg.bilateral_filter.sigmaColor, cfg.bilateral_filter.sigmaSpace);
     //cv::Mat denoisedImage = denoise_algorithm(bilateralImage, cfg.denoise.h, cfg.denoise.hColor, cfg.denoise.templateWindowSize, cfg.denoise.searchWindowSize);
-    cv::Mat edges = canny_edge_detection(RedEnhanced, cfg.canny_parameters.threshold.low_threshold, cfg.canny_parameters.threshold.max_threshold);
+    cv::Mat edges = canny_edge_detection(medianFiltered, cfg.canny_parameters.threshold.low_threshold, cfg.canny_parameters.threshold.max_threshold);
     //
     cv::Mat closedImage = closing_morphology(edges, cfg.blob_detection.connectivity);
-    cv::Mat openingImage = opening_morphology(closedImage, 2);
+    cv::Mat openingImage = opening_morphology(closedImage, 1);
     BlobData blobs = blob_detection(openingImage, 4);
     cout << "Total labels (including background): " << blobs.numLabels << endl;
     //Draw circles around detected blobs (excluding background aka label 0)
@@ -55,15 +56,17 @@ int main() {
     //cv::imshow("Denoised Image", denoisedImage);
     //cv::imshow("Brightness & Contrast Adjusted Image", brightness_contrast_image);
     //cv::imshow("Median Filtered Image", medianFiltered);
+    cv::imshow("Red Enhanced Image", RedEnhanced);
     cv::imshow("Edges", edges);
-    cv::imshow("Labeled Blobs", image);
-    //cv::imshow("Saturation Adjusted Image", saturatedImage);
-    cv::imshow("Final Labeled Image", RedEnhanced);
+    cv::imshow("Labeled Blobs", closedImage);
+    cv::imshow("Opening Morphology Image", openingImage);
+    ////cv::imshow("Saturation Adjusted Image", saturatedImage);
+    cv::imshow("Final Labeled Image", image);
     cv::waitKey(0);
 
 
     //!! Tuning test
-    //tuning(image, 3);
+    tuning(image, 4);
     return 0;
 
 }

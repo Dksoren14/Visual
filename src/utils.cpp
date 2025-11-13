@@ -240,6 +240,46 @@ void tuning(const cv::Mat& inputImage, int mode) {
         }
             destroyWindow(windowName);
             break;
-        }   
+        } 
+        case 4: {
+            const string windowName = "BGR Channel Changer and Canny Tuning";
+            int scale = 10;           // initial trackbar position (center)
+            int scale_slider = 10;    // trackbar value (0–20)
+            const int scale_max = 20;
+            namedWindow(windowName, WINDOW_AUTOSIZE);
+            createTrackbar("Channel Index (0-B,1-G,2-R)", windowName, &d, 2);
+            createTrackbar("Scale", windowName, &scale_slider, scale_max);
+            createTrackbar("Canny Low", windowName, &lowThreshold, 350);
+            createTrackbar("Canny High", windowName, &highThreshold, 350);
+            Mat changedChannelImage, edges, output;
+            cout << "Adjust sliders. Press ESC to exit." << endl;
+            while (true) {
+                // Split BGR channels
+                vector<Mat> bgrChannels;
+                split(inputImage, bgrChannels);
+                // Adjust specified channel
+                double scale = scale_slider / 10.0; // Scale from 0.0 to 2.0
+                if (d >= 0 && d < 3) {
+                    bgrChannels[d] *= scale;
+                }
+                // Merge back
+                merge(bgrChannels, changedChannelImage);
+                // Convert to grayscale for Canny
+                Mat grayChanged;
+                cvtColor(changedChannelImage, grayChanged, COLOR_BGR2GRAY);
+                // Apply Canny
+                Canny(grayChanged, edges, lowThreshold, highThreshold);
+                // Combine for visualization
+                cvtColor(edges, output, COLOR_GRAY2BGR);
+                addWeighted(output, 0.7, inputImage, 0.3, 0, output);
+                imshow(windowName, output);
+                // Exit on ESC key
+                int key = waitKey(30);
+                if (key == 27)  // ESC
+                    break;
+            }
+            destroyWindow(windowName);
+            break;
+        } 
     }
 }
